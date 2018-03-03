@@ -8,6 +8,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.view.MotionEvent;
 import android.view.View;
+import android.widget.Button;
+import android.widget.SeekBar;
+import android.widget.TextView;
+
+import org.w3c.dom.Text;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -85,6 +90,10 @@ public class FullscreenActivity extends AppCompatActivity {
     };
 
     private GLSurfaceView mGLSurfaceView;
+    private ScrollRenderer mRenderer;
+    private SeekBar xSpeedSlider, ySpeedSlider;
+    private Button xSpeedLabel, ySpeedLabel;
+    private boolean mXInv = false, mYInv = false;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -92,7 +101,7 @@ public class FullscreenActivity extends AppCompatActivity {
 
         setContentView(R.layout.activity_fullscreen);
 
-        mVisible = true;
+        mVisible = false;
         mControlsView = findViewById(R.id.fullscreen_content_controls);
         mContentView = findViewById(R.id.fullscreen_content);
 
@@ -108,14 +117,79 @@ public class FullscreenActivity extends AppCompatActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
+        //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
         //mGLSurfaceView = new GLSurfaceView(this);
         mGLSurfaceView = (GLSurfaceView)findViewById(R.id.glsurfaceview);
         mGLSurfaceView.setEGLContextClientVersion(2); // OpenGL ES 2.0
         //mGLSurfaceView.setRenderer(new SimpleRenderer(getApplicationContext()));
-        mGLSurfaceView.setRenderer(new ScrollRenderer(getApplicationContext()));
+        mRenderer = new ScrollRenderer(getApplicationContext());
+        mGLSurfaceView.setRenderer(mRenderer);
         //setContentView(mGLSurfaceView);
+
+        ySpeedLabel = (Button) findViewById(R.id.y_speed_label);
+        ySpeedLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mYInv = !mYInv;
+                updateYSpeed(ySpeedSlider.getProgress());
+            }
+        });
+        ySpeedSlider = (SeekBar)findViewById(R.id.y_speed_slider);
+        ySpeedSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                updateYSpeed(i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+        xSpeedLabel = (Button) findViewById(R.id.x_speed_label);
+        xSpeedLabel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mXInv = !mXInv;
+                updateXSpeed(xSpeedSlider.getProgress());
+            }
+        });
+        xSpeedSlider = (SeekBar)findViewById(R.id.x_speed_slider);
+        xSpeedSlider.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
+            @Override
+            public void onProgressChanged(SeekBar seekBar, int i, boolean b) {
+                updateXSpeed(i);
+            }
+
+            @Override
+            public void onStartTrackingTouch(SeekBar seekBar) {
+
+            }
+
+            @Override
+            public void onStopTrackingTouch(SeekBar seekBar) {
+
+            }
+        });
+
+    }
+
+    private void updateXSpeed(float f){
+        float pxPerFrame = f * ((mXInv) ? -1 : 1);
+        double spd = mRenderer.SetScrollSpeedX(pxPerFrame);
+        xSpeedLabel.setText(String.format("%.1f px/F", spd));
+    }
+    private void updateYSpeed(float f){
+        float pxPerFrame = f * ((mYInv) ? -1 : 1);
+        double spd = mRenderer.SetScrollSpeedY(pxPerFrame);
+        ySpeedLabel.setText(String.format("%.1f px/F", spd));
     }
 
     @Override
@@ -138,6 +212,8 @@ public class FullscreenActivity extends AppCompatActivity {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(100);
+        xSpeedSlider.setProgress(0);
+        ySpeedSlider.setProgress(256);
     }
 
     private void toggle() {
@@ -159,14 +235,20 @@ public class FullscreenActivity extends AppCompatActivity {
 
         // Schedule a runnable to remove the status and navigation bar after a delay
         mHideHandler.removeCallbacks(mShowPart2Runnable);
+        //mHideHandler.post(mHidePart2Runnable);
         mHideHandler.postDelayed(mHidePart2Runnable, UI_ANIMATION_DELAY);
     }
 
     @SuppressLint("InlinedApi")
     private void show() {
         // Show the system bar
-        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
-                | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+        //mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_LAYOUT_FULLSCREEN
+        //        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
+
+        mContentView.setSystemUiVisibility(View.SYSTEM_UI_FLAG_FULLSCREEN
+                        | View.SYSTEM_UI_FLAG_LAYOUT_STABLE
+                        | View.SYSTEM_UI_FLAG_IMMERSIVE_STICKY
+                        | View.SYSTEM_UI_FLAG_LAYOUT_HIDE_NAVIGATION);
         mVisible = true;
 
         // Schedule a runnable to display UI elements after a delay

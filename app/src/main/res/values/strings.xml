@@ -3,4 +3,7 @@
 
     <string name="dummy_button">Dummy Button</string>
     <string name="dummy_content">DUMMY\nCONTENT</string>
+
+    <string name="x_speed_label">X</string>
+    <string name="y_speed_label">Y</string>
 </resources>

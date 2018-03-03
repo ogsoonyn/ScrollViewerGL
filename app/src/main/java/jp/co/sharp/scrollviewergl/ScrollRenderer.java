@@ -5,6 +5,7 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
+import android.util.Log;
 
 import java.nio.FloatBuffer;
 
@@ -64,8 +65,8 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
     private float mScrollOffsetX = 0;
     private float mScrollOffsetY = 0;
 
-    private float mScrollSpeedX = 0.001f;
-    private float mScrollSpeedY = 0.008f;
+    private float mScrollSpeedX = 0f;
+    private float mScrollSpeedY = 0f;
 
     private int mViewportW = 1080;
     private int mViewportH = 1920;
@@ -210,11 +211,41 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
     //////////////////////////////////////////////////////////////////////////
     // メソッド
 
-    // 1フレームあたりの移動ドット数でスクロールスピードを設定する
-    public void SetScrollSpeed(float speedX_dpf, float speedY_dpf)
+    // 1秒あたりの移動ドット数を指定してスクロールスピード決定
+    // 1フレームあたりの移動ドット数を返す。
+    public float SetScrollSpeedX(float speed_dps)
     {
+        // dot per frame
+        float DpF_x = speed_dps * (mMillisecPerFrame / 1000f);
 
+        Log.d(TAG, "X Speed(DpF) = " + DpF_x);
+
+        // speed for OpenGL
+        mScrollSpeedX = DpF_x / mViewportW;
+
+        return DpF_x;
     }
+
+    public float SetScrollSpeedY(float speed_dps)
+    {
+        // dot per frame
+        float DpF_y = speed_dps * (mMillisecPerFrame / 1000f);
+
+        Log.d(TAG, "Y Speed(DpF) = " + DpF_y);
+
+        // speed for OpenGL
+        mScrollSpeedY = DpF_y / mViewportW;
+
+        return DpF_y;
+    }
+
+    public void ResetScrollOffset()
+    {
+        mScrollOffsetX = 0;
+        mScrollOffsetY = 0;
+    }
+
+    static final String TAG = "ScrollRenderer";
 
     private void UpdateScrollOffset()
     {
