@@ -113,7 +113,8 @@ public class FullscreenActivity extends AppCompatActivity {
         //mGLSurfaceView = new GLSurfaceView(this);
         mGLSurfaceView = (GLSurfaceView)findViewById(R.id.glsurfaceview);
         mGLSurfaceView.setEGLContextClientVersion(2); // OpenGL ES 2.0
-        mGLSurfaceView.setRenderer(new SimpleRenderer(getApplicationContext()));
+        //mGLSurfaceView.setRenderer(new SimpleRenderer(getApplicationContext()));
+        mGLSurfaceView.setRenderer(new ScrollRenderer(getApplicationContext()));
         //setContentView(mGLSurfaceView);
     }
 

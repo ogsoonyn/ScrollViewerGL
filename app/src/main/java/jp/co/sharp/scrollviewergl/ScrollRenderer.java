@@ -1,11 +1,4 @@
-package jp.co.sharp.scrollviewergl; /**
- * Created by sharp on 2018/03/02.
- */
-
-import java.nio.FloatBuffer;
-
-import javax.microedition.khronos.egl.EGLConfig;
-import javax.microedition.khronos.opengles.GL10;
+package jp.co.sharp.scrollviewergl;
 
 import android.content.Context;
 import android.graphics.Bitmap;
@@ -13,10 +6,16 @@ import android.graphics.BitmapFactory;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 
-//import com.orangesignal.android.example.gles20.R;
-//import com.orangesignal.android.opengl.GLES20Utils;
+import java.nio.FloatBuffer;
 
-public class SimpleRenderer implements GLSurfaceView.Renderer {
+import javax.microedition.khronos.egl.EGLConfig;
+import javax.microedition.khronos.opengles.GL10;
+
+/**
+ * Created by ynaka on 2018/03/03.
+ */
+
+public class ScrollRenderer implements GLSurfaceView.Renderer {
 
     /**
      * コンテキストを保持します。
@@ -60,6 +59,20 @@ public class SimpleRenderer implements GLSurfaceView.Renderer {
 
     private int mTextureId;
 
+    private int mScrollOffset;
+
+    private float mScrollOffsetX = 0;
+    private float mScrollOffsetY = 0;
+
+    private float mScrollSpeedX = 0.001f;
+    private float mScrollSpeedY = 0.008f;
+
+    private int mViewportW = 1080;
+    private int mViewportH = 1920;
+
+    private float mMillisecPerFrame = 1000 / 60f;
+    private long mPrevMillisec = 0;
+
     //////////////////////////////////////////////////////////////////////////
     // コンストラクタ
 
@@ -68,7 +81,7 @@ public class SimpleRenderer implements GLSurfaceView.Renderer {
      *
      * @param context コンテキスト
      */
-    public SimpleRenderer(final Context context) {
+    public ScrollRenderer(final Context context) {
         mContext = context;
     }
 
@@ -96,7 +109,8 @@ public class SimpleRenderer implements GLSurfaceView.Renderer {
                     "uniform sampler2D texture;" +
                     "uniform vec2 scrollOffset;" +
                     "void main() {" +
-                    "gl_FragColor = texture2D(texture, texcoordVarying);" +
+                    "gl_FragColor = texture2D(texture, vec2(texcoordVarying.x + scrollOffset.x, texcoordVarying.y + scrollOffset.y));" +
+                    //"gl_FragColor = texture2D(texture, vec2(texcoordVarying.x + 0.5f, texcoordVarying.y));" +
                     "}";
 
     @Override
@@ -133,6 +147,10 @@ public class SimpleRenderer implements GLSurfaceView.Renderer {
             throw new IllegalStateException("Could not get uniform location for texture");
         }
 
+        // add
+        mScrollOffset = GLES20.glGetUniformLocation(mProgram, "scrollOffset");
+        mPrevMillisec = System.currentTimeMillis();
+
         // テクスチャを作成します。(サーフェスが作成される度にこれを行う必要があります)
         final Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main1);
         mTextureId = GLES20Utils.loadTexture(bitmap);
@@ -146,6 +164,9 @@ public class SimpleRenderer implements GLSurfaceView.Renderer {
         // ビューポートを設定します。
         GLES20.glViewport(0, 0, width, height);
         //GLES20Utils.checkGlError("glViewport"); // ここでエラー。
+
+        mViewportH = height;
+        mViewportW = width;
     }
 
     @Override
@@ -153,6 +174,14 @@ public class SimpleRenderer implements GLSurfaceView.Renderer {
         // OpenGL ES 2.0 を使用するので、パラメータで渡された GL10 インターフェースを無視して、代わりに GLES20 クラスの静的メソッドを使用します。
 
         // XXX - このサンプルではテクスチャの簡単な描画だけなので深さ関連の有効/無効や指定は一切していません。
+
+        // フレームレート計測処理
+        long current = System.currentTimeMillis();
+        mMillisecPerFrame = ((mMillisecPerFrame * 99) + (current - mPrevMillisec)) / 100f;
+        mPrevMillisec = current;
+
+        // スクロールする処理。
+        UpdateScrollOffset();
 
         // 背景色を指定して背景を描画します。
         GLES20.glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
@@ -171,10 +200,38 @@ public class SimpleRenderer implements GLSurfaceView.Renderer {
         GLES20.glVertexAttribPointer(mTexcoord, 2, GLES20.GL_FLOAT, false, 0, mTexcoordBuffer);
         GLES20.glVertexAttribPointer(mPosition, 3, GLES20.GL_FLOAT, false, 0, mVertexBuffer);
 
+        GLES20.glUniform2f(mScrollOffset, mScrollOffsetX, mScrollOffsetY);
         GLES20.glDrawArrays(GLES20.GL_TRIANGLE_STRIP, 0, 4);
 
         GLES20.glDisable(GLES20.GL_BLEND);
         GLES20.glDisable(GLES20.GL_TEXTURE_2D);
+    }
+
+    //////////////////////////////////////////////////////////////////////////
+    // メソッド
+
+    // 1フレームあたりの移動ドット数でスクロールスピードを設定する
+    public void SetScrollSpeed(float speedX_dpf, float speedY_dpf)
+    {
+
+    }
+
+    private void UpdateScrollOffset()
+    {
+        // offset 更新
+        mScrollOffsetY += mScrollSpeedY;
+        if(mScrollOffsetY >= 1){
+            mScrollOffsetY -= 1f;
+        }else if(mScrollOffsetY <= 0){
+            mScrollOffsetY += 1f;
+        }
+
+        mScrollOffsetX += mScrollSpeedX;
+        if(mScrollOffsetX >= 1){
+            mScrollOffsetX -= 1f;
+        }else if(mScrollOffsetX <= 0){
+            mScrollOffsetX += 1f;
+        }
     }
 
 }
