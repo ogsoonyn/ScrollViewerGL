@@ -174,7 +174,9 @@ class ScrollRenderer implements GLSurfaceView.Renderer {
 
         // フレームレート計測処理
         long current = System.currentTimeMillis();
-        mMillisecPerFrame = ((mMillisecPerFrame * 99) + (current - mPrevMillisec)) / 100f;
+        if(current - mPrevMillisec < 100) {
+            mMillisecPerFrame = ((mMillisecPerFrame * 99) + (current - mPrevMillisec)) / 100f;
+        }
         mPrevMillisec = current;
 
         // スクロールする処理。
