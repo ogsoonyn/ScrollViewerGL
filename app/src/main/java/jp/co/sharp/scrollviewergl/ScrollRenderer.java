@@ -110,7 +110,7 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
                     "uniform sampler2D texture;" +
                     "uniform vec2 scrollOffset;" +
                     "void main() {" +
-                    "gl_FragColor = texture2D(texture, vec2(texcoordVarying.x + scrollOffset.x, texcoordVarying.y + scrollOffset.y));" +
+                    "gl_FragColor = texture2D(texture, vec2(texcoordVarying.x - scrollOffset.x, texcoordVarying.y + scrollOffset.y));" +
                     //"gl_FragColor = texture2D(texture, vec2(texcoordVarying.x + 0.5f, texcoordVarying.y));" +
                     "}";
 
