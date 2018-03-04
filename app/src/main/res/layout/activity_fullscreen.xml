@@ -46,7 +46,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <TextView
@@ -75,7 +74,6 @@
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
-                android:layout_weight="1"
                 android:orientation="horizontal">
 
                 <TextView
@@ -100,6 +98,45 @@
                     android:layout_weight="1"
                     android:progress="1"
                     android:max="1280"/>
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:orientation="horizontal">
+
+                <Button
+                    android:id="@+id/prev_content_button"
+                    style="?metaButtonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/prev_content_label" />
+
+                <Button
+                    android:id="@+id/next_content_button"
+                    style="?metaButtonBarButtonStyle"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:text="@string/next_content_label" />
+
+                <Button
+                    android:id="@+id/reset_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?metaButtonBarButtonStyle"
+                    android:layout_weight="1"
+                    android:text="@string/reset_label" />
+
+                <Button
+                    android:id="@+id/dummy_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?metaButtonBarButtonStyle"
+                    android:layout_weight="1"
+                    android:text="@string/dummy_button" />
+
             </LinearLayout>
 
         </LinearLayout>

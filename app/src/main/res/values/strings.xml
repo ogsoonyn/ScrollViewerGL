@@ -6,4 +6,8 @@
 
     <string name="x_speed_label">X</string>
     <string name="y_speed_label">Y</string>
+
+    <string name="prev_content_label">←</string>
+    <string name="next_content_label">→</string>
+    <string name="reset_label">Reset</string>
 </resources>

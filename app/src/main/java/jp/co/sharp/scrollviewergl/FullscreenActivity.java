@@ -179,6 +179,29 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         });
 
+        final Button nextContentButton = (Button) findViewById(R.id.next_content_button);
+        nextContentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRenderer.NextTexture();
+            }
+        });
+
+        final Button prevContentButton = (Button) findViewById(R.id.prev_content_button);
+        prevContentButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                mRenderer.PreviousTexture();
+            }
+        });
+
+        final Button resetButton = (Button) findViewById(R.id.reset_button);
+        resetButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                reset();
+            }
+        });
     }
 
     private void updateXSpeed(float f){
@@ -212,8 +235,7 @@ public class FullscreenActivity extends AppCompatActivity {
         // created, to briefly hint to the user that UI controls
         // are available.
         delayedHide(100);
-        xSpeedSlider.setProgress(0);
-        ySpeedSlider.setProgress(256);
+        reset();
     }
 
     private void toggle() {
@@ -263,5 +285,13 @@ public class FullscreenActivity extends AppCompatActivity {
     private void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    private void reset(){
+        mXInv = false;
+        mYInv = false;
+        xSpeedSlider.setProgress(0);
+        ySpeedSlider.setProgress(256);
+        mRenderer.ResetOffset();
     }
 }

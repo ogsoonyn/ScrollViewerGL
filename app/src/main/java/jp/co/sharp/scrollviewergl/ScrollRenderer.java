@@ -8,15 +8,12 @@ import android.opengl.GLSurfaceView;
 import android.util.Log;
 
 import java.nio.FloatBuffer;
+import java.util.ArrayList;
 
 import javax.microedition.khronos.egl.EGLConfig;
 import javax.microedition.khronos.opengles.GL10;
 
-/**
- * Created by ynaka on 2018/03/03.
- */
-
-public class ScrollRenderer implements GLSurfaceView.Renderer {
+class ScrollRenderer implements GLSurfaceView.Renderer {
 
     /**
      * コンテキストを保持します。
@@ -58,7 +55,8 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
     private int mTexcoord;
     private int mTexture;
 
-    private int mTextureId;
+    private ArrayList<Integer> mTextureList = null;
+    private int mTextureIndex = 0;
 
     private int mScrollOffset;
 
@@ -82,7 +80,7 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
      *
      * @param context コンテキスト
      */
-    public ScrollRenderer(final Context context) {
+    ScrollRenderer(final Context context) {
         mContext = context;
     }
 
@@ -153,9 +151,7 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
         mPrevMillisec = System.currentTimeMillis();
 
         // テクスチャを作成します。(サーフェスが作成される度にこれを行う必要があります)
-        final Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main1);
-        mTextureId = GLES20Utils.loadTexture(bitmap);
-        bitmap.recycle();
+        LoadTexturesFromResources();
     }
 
     @Override
@@ -196,7 +192,7 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
 
         // テクスチャの指定
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureId);
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureList.get(mTextureIndex));
         GLES20.glUniform1i(mTexture, 0);
         GLES20.glVertexAttribPointer(mTexcoord, 2, GLES20.GL_FLOAT, false, 0, mTexcoordBuffer);
         GLES20.glVertexAttribPointer(mPosition, 3, GLES20.GL_FLOAT, false, 0, mVertexBuffer);
@@ -213,7 +209,7 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
 
     // 1秒あたりの移動ドット数を指定してスクロールスピード決定
     // 1フレームあたりの移動ドット数を返す。
-    public float SetScrollSpeedX(float speed_dps)
+    float SetScrollSpeedX(float speed_dps)
     {
         // dot per frame
         float DpF_x = speed_dps * (mMillisecPerFrame / 1000f);
@@ -226,7 +222,7 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
         return DpF_x;
     }
 
-    public float SetScrollSpeedY(float speed_dps)
+    float SetScrollSpeedY(float speed_dps)
     {
         // dot per frame
         float DpF_y = speed_dps * (mMillisecPerFrame / 1000f);
@@ -239,13 +235,7 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
         return DpF_y;
     }
 
-    public void ResetScrollOffset()
-    {
-        mScrollOffsetX = 0;
-        mScrollOffsetY = 0;
-    }
-
-    static final String TAG = "ScrollRenderer";
+    private static final String TAG = "ScrollRenderer";
 
     private void UpdateScrollOffset()
     {
@@ -263,6 +253,59 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
         }else if(mScrollOffsetX <= 0){
             mScrollOffsetX += 1f;
         }
+    }
+
+    private void LoadTexturesFromResources()
+    {
+        if(mTextureList == null){
+            mTextureList = new ArrayList<Integer>();
+        }
+
+        Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main1);
+        mTextureList.add(GLES20Utils.loadTexture(bitmap));
+
+        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main2);
+        mTextureList.add(GLES20Utils.loadTexture(bitmap));
+
+        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main3);
+        mTextureList.add(GLES20Utils.loadTexture(bitmap));
+
+        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main4);
+        mTextureList.add(GLES20Utils.loadTexture(bitmap));
+
+        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main6);
+        mTextureList.add(GLES20Utils.loadTexture(bitmap));
+
+        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main7);
+        mTextureList.add(GLES20Utils.loadTexture(bitmap));
+        bitmap.recycle();
+    }
+
+    public void LoadTextureFromBitmap(Bitmap b)
+    {
+        mTextureList.add(GLES20Utils.loadTexture(b));
+        b.recycle();
+    }
+
+    private void SetTextureIndex(int index)
+    {
+        int i = index;
+        while(i<0){
+            i += mTextureList.size();
+        }
+        mTextureIndex = i % mTextureList.size();
+    }
+
+    void NextTexture(){
+        SetTextureIndex(mTextureIndex+1);
+    }
+    void PreviousTexture(){
+        SetTextureIndex(mTextureIndex-1);
+    }
+
+    void ResetOffset(){
+        mScrollOffsetX = 0f;
+        mScrollOffsetY = 0f;
     }
 
 }
