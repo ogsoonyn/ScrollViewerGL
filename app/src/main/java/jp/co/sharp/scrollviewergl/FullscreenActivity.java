@@ -226,6 +226,25 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         });
 
+        final Button addImgButton = (Button) findViewById(R.id.add_image_button);
+        addImgButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                // 標準のギャラリーを起動して画像のURIを取得
+                Intent intent = new Intent(Intent.ACTION_OPEN_DOCUMENT);
+                intent.addCategory(Intent.CATEGORY_OPENABLE);
+                intent.setType("image/*");
+
+                // 暗黙的Intentを使ってギャラリーアプリを選択して画像のURIを取得
+                /*
+                Intent intent = new Intent(Intent.ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI);
+                intent.setType("image/*");
+                */
+
+                startActivityForResult(intent, READ_REQUEST_CODE);
+            }
+        });
+
         final TextView fpsLabel = (TextView) findViewById(R.id.fps_label);
         final Handler handler = new Handler();
         final Runnable r =new Runnable() {
@@ -272,6 +291,29 @@ public class FullscreenActivity extends AppCompatActivity {
         delayedHide(100);
         reset();
     }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if(requestCode == READ_REQUEST_CODE && resultCode == Activity.RESULT_OK){
+            Uri uri;
+            if(data != null){
+                uri = data.getData();
+                try{
+                    Bitmap bitmap = MediaStore.Images.Media.getBitmap(getContentResolver(), uri);
+                    mRenderer.SetExternalBitmap(bitmap);
+
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    private static final int READ_REQUEST_CODE = 42;
 
     private void toggle() {
         if (mVisible) {

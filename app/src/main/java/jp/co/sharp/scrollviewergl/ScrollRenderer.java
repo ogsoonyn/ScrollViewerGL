@@ -72,6 +72,8 @@ class ScrollRenderer implements GLSurfaceView.Renderer {
     private float mMillisecPerFrame = 1000 / 60f;
     private long mPrevMillisec = 0;
 
+    private Bitmap mExBitmap = null; // 外部読み込み用
+
     //////////////////////////////////////////////////////////////////////////
     // コンストラクタ
 
@@ -261,8 +263,9 @@ class ScrollRenderer implements GLSurfaceView.Renderer {
     private void LoadTexturesFromResources()
     {
         if(mTextureList == null){
-            mTextureList = new ArrayList<Integer>();
+            mTextureList = new ArrayList<>();
         }
+        mTextureList.clear();
 
         Bitmap bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main1);
         mTextureList.add(GLES20Utils.loadTexture(bitmap));
@@ -281,13 +284,18 @@ class ScrollRenderer implements GLSurfaceView.Renderer {
 
         bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main7);
         mTextureList.add(GLES20Utils.loadTexture(bitmap));
+
         bitmap.recycle();
+
+        // 無理やり外部読み込みのビットマップをテクスチャ化
+        if(mExBitmap != null){
+            mTextureList.add(GLES20Utils.loadTexture(mExBitmap));
+            mTextureIndex = mTextureList.size() -1; // 追加したBitmapを表示する
+        }
     }
 
-    public void LoadTextureFromBitmap(Bitmap b)
-    {
-        mTextureList.add(GLES20Utils.loadTexture(b));
-        b.recycle();
+    public void SetExternalBitmap(Bitmap b){
+        mExBitmap = b;
     }
 
     private void SetTextureIndex(int index)

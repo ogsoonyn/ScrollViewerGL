@@ -10,4 +10,5 @@
     <string name="prev_content_label">←</string>
     <string name="next_content_label">→</string>
     <string name="reset_label">Reset</string>
+    <string name="add_image_label">Open Image</string>
 </resources>

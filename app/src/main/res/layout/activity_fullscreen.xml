@@ -129,6 +129,15 @@
                     android:layout_weight="1"
                     android:text="@string/reset_label" />
 
+                <Button
+                    android:id="@+id/add_image_button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    style="?metaButtonBarButtonStyle"
+                    android:layout_weight="1"
+                    android:text="@string/add_image_label" />
+
+
                 <TextView
                     android:id="@+id/fps_label"
                     android:layout_width="wrap_content"
