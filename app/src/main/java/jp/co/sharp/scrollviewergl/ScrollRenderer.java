@@ -221,7 +221,7 @@ public class ScrollRenderer implements GLSurfaceView.Renderer {
         Log.d(TAG, "X Speed(DpF) = " + DpF_x);
 
         // speed for OpenGL
-        mScrollSpeedX = DpF_x / mViewportW;
+        mScrollSpeedX = DpF_x / mViewportH;
 
         return DpF_x;
     }
