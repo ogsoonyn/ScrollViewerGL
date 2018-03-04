@@ -106,6 +106,8 @@ public class FullscreenActivity extends AppCompatActivity {
     private Button xSpeedLabel, ySpeedLabel;
     private boolean mXInv = false, mYInv = false;
 
+    private static final int READ_REQUEST_CODE = 42;
+
     // for permission
     private static final int REQUEST_EXTERNAL_STORAGE = 1;
     private static String[] PERMISSIONS_STORAGE = {
@@ -142,18 +144,17 @@ public class FullscreenActivity extends AppCompatActivity {
         // while interacting with the UI.
         //findViewById(R.id.dummy_button).setOnTouchListener(mDelayHideTouchListener);
 
-        //mGLSurfaceView = new GLSurfaceView(this);
         mGLSurfaceView = (GLSurfaceView)findViewById(R.id.glsurfaceview);
         mGLSurfaceView.setEGLContextClientVersion(2); // OpenGL ES 2.0
-        //mGLSurfaceView.setRenderer(new SimpleRenderer(getApplicationContext()));
+
         mRenderer = new ScrollRenderer(getApplicationContext());
         mGLSurfaceView.setRenderer(mRenderer);
-        //setContentView(mGLSurfaceView);
 
         ySpeedLabel = (Button) findViewById(R.id.y_speed_label);
         ySpeedLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 縦スクロール反転
                 mYInv = !mYInv;
                 updateYSpeed(ySpeedSlider.getProgress());
             }
@@ -180,6 +181,7 @@ public class FullscreenActivity extends AppCompatActivity {
         xSpeedLabel.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
+                // 横スクロール反転
                 mXInv = !mXInv;
                 updateXSpeed(xSpeedSlider.getProgress());
             }
@@ -202,6 +204,7 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         });
 
+        // コンテンツ切り替え
         final Button nextContentButton = (Button) findViewById(R.id.next_content_button);
         nextContentButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -218,6 +221,7 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         });
 
+        // スクロールスピードをリセット
         final Button resetButton = (Button) findViewById(R.id.reset_button);
         resetButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -226,6 +230,7 @@ public class FullscreenActivity extends AppCompatActivity {
             }
         });
 
+        // 画像読み込み
         final Button addImgButton = (Button) findViewById(R.id.add_image_button);
         addImgButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -313,8 +318,6 @@ public class FullscreenActivity extends AppCompatActivity {
         }
     }
 
-    private static final int READ_REQUEST_CODE = 42;
-
     private void toggle() {
         if (mVisible) {
             hide();
@@ -364,6 +367,7 @@ public class FullscreenActivity extends AppCompatActivity {
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
 
+    // スクロールスピードをリセット
     private void reset(){
         mXInv = false;
         mYInv = false;
