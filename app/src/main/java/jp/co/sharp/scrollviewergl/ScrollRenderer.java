@@ -164,6 +164,7 @@ class ScrollRenderer implements GLSurfaceView.Renderer {
 
         mViewportH = height;
         mViewportW = width;
+        Log.d(TAG, "Viewport: " + width + " x " + height);
     }
 
     @Override
@@ -296,6 +297,7 @@ class ScrollRenderer implements GLSurfaceView.Renderer {
             i += mTextureList.size();
         }
         mTextureIndex = i % mTextureList.size();
+        Log.d(TAG, "texture index = " + mTextureIndex);
     }
 
     void NextTexture(){
