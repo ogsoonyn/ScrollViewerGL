@@ -308,4 +308,7 @@ class ScrollRenderer implements GLSurfaceView.Renderer {
         mScrollOffsetY = 0f;
     }
 
+    float GetMillisecPerFrame(){
+        return mMillisecPerFrame;
+    }
 }

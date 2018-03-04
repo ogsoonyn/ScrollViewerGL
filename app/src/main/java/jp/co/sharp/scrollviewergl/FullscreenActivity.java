@@ -202,6 +202,18 @@ public class FullscreenActivity extends AppCompatActivity {
                 reset();
             }
         });
+
+        final TextView fpsLabel = (TextView) findViewById(R.id.fps_label);
+        final Handler handler = new Handler();
+        final Runnable r =new Runnable() {
+            @Override
+            public void run() {
+                float fps = 1000f / mRenderer.GetMillisecPerFrame();
+                fpsLabel.setText(String.format("%3.1f FPS", fps));
+                handler.postDelayed(this, 200);
+            }
+        };
+        handler.post(r);
     }
 
     private void updateXSpeed(float f){
