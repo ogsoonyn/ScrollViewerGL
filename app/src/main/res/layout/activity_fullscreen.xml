@@ -68,7 +68,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:progress="1"
-                    android:max="1280"/>
+                    android:max="2560"/>
             </LinearLayout>
 
             <LinearLayout
@@ -97,7 +97,7 @@
                     android:layout_height="match_parent"
                     android:layout_weight="1"
                     android:progress="1"
-                    android:max="1280"/>
+                    android:max="2560"/>
             </LinearLayout>
 
             <LinearLayout
