@@ -273,10 +273,10 @@ class ScrollRenderer implements GLSurfaceView.Renderer {
         bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main2);
         mTextureList.add(GLES20Utils.loadTexture(bitmap));
 
-        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main3);
+        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main8);
         mTextureList.add(GLES20Utils.loadTexture(bitmap));
 
-        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main4);
+        bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main9);
         mTextureList.add(GLES20Utils.loadTexture(bitmap));
 
         bitmap = BitmapFactory.decodeResource(mContext.getResources(), R.drawable.main6);
